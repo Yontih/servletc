@@ -1,4 +1,4 @@
-package com.yonti.servletx;
+package servletx.http;
 
 import org.json.JSONObject;
 
@@ -8,12 +8,12 @@ import java.io.IOException;
 /**
  * Created by Yonti on 18/06/2016.
  */
-public class WebResponse {
+public class HttpResponse {
     public final static String C_JSON_CONTENT_TYPE = "\"text/json; charset=UTF-8\"";
 
     private HttpServletResponse mResp;
 
-    public WebResponse(HttpServletResponse resp) {
+    public HttpResponse(HttpServletResponse resp) {
         mResp = resp;
         mResp.setStatus(202);
     }
@@ -26,18 +26,19 @@ public class WebResponse {
         sendJson(json.toString());
     }
 
-    public WebResponse setStatus(int status) {
+    public HttpResponse setStatus(int status) {
         mResp.setStatus(status);
         return this;
     }
 
     public void sendJson(String json) {
-        try {
-            mResp.setContentType("text/json; charset=UTF-8");
-            mResp.getWriter().write(json);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        mResp.setContentType("text/json; charset=UTF-8");
+        send(json);
+    }
+
+    public void sendHtml(String html) {
+        mResp.setContentType("text/html");
+        send(html);
     }
 
     public void send(String value) {

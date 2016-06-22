@@ -1,4 +1,4 @@
-package com.yonti.servletx.json;
+package servletx.json;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;

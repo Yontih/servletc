@@ -1,4 +1,7 @@
-package com.yonti.servletx;
+package servletx;
+
+import servletx.http.HttpRequest;
+import servletx.http.HttpResponse;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,7 +51,7 @@ public class Route {
         return mPrefix;
     }
 
-    public void navigate(WebRequest req, WebResponse resp) {
+    public void navigate(HttpRequest req, HttpResponse resp) {
         String method = req.getRequest().getMethod();
         String path = req.getRequest().getPathInfo();
         HashMap<String, HttpActionMiddlewares> map;

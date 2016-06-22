@@ -1,4 +1,4 @@
-package com.yonti.servletx;
+package servletx.http;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -7,11 +7,11 @@ import java.util.Map;
 /**
  * Created by Yonti on 18/06/2016.
  */
-public class WebRequest {
+public class HttpRequest {
     private HttpServletRequest mReq;
     private Map<String, Object> mExtraData;
 
-    public WebRequest(HttpServletRequest req) {
+    public HttpRequest(HttpServletRequest req) {
         mReq = req;
         mExtraData = new HashMap<String, Object>();
     }

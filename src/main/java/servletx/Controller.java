@@ -1,4 +1,4 @@
-package com.yonti.servletx;
+package servletx;
 
 /**
  * Created by Yonti on 18/06/2016.
