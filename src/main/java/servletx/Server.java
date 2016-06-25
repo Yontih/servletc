@@ -131,7 +131,8 @@ public class Server extends HttpServlet {
         return allPaths.length > 0 ? allPaths[1] : path;
     }
 
-    protected Route findRouteByPrefix(String prefix) {
+    protected Route findRoute(HttpServletRequest req) {
+        String prefix = parsePrefix(req);
         Route route = null;
 
         for (Route currentRoute : mRoutes) {
@@ -143,12 +144,5 @@ public class Server extends HttpServlet {
         }
 
         return route;
-    }
-
-    protected Route findRoute(HttpServletRequest req) {
-        String prefix = parsePrefix(req);
-        Route route = findRouteByPrefix(prefix);
-
-        return route != null ? route : findRouteByPrefix("/");
     }
 }
