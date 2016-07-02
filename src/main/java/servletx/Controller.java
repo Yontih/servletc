@@ -5,14 +5,14 @@ package servletx;
  */
 public class Controller {
 
-    protected Route mRoute;
+    protected Router mRouter;
 
     public Controller(String route) {
-        mRoute = new Route(route);
+        mRouter = new Router(route);
     }
 
-    public Route getRoute() {
-        return mRoute;
+    public Router getRoute() {
+        return mRouter;
     }
 }
 

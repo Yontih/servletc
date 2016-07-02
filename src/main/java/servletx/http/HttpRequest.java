@@ -10,6 +10,7 @@ import java.util.Map;
 public class HttpRequest {
     private HttpServletRequest mReq;
     private Map<String, Object> mExtraData;
+    private Map<String, Object> mParams;
 
     public HttpRequest(HttpServletRequest req) {
         mReq = req;
@@ -33,6 +34,10 @@ public class HttpRequest {
         }
 
         return map;
+    }
+
+    public void setParams(Map<String, Object> params) {
+        mParams = params;
     }
 
     public <T> void put(String key, T value) {

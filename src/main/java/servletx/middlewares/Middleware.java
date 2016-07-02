@@ -1,4 +1,4 @@
-package servletx;
+package servletx.middlewares;
 
 import servletx.http.HttpRequest;
 import servletx.http.HttpResponse;

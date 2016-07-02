@@ -1,10 +1,8 @@
 package servletx;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import servletx.http.HttpRequest;
 import servletx.http.HttpResponse;
-import servletx.json.JSONBuilder;
+import servletx.middlewares.Middleware;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -17,16 +15,16 @@ import java.util.ArrayList;
  * Created by Yonti on 18/06/2016.
  */
 public class Server extends HttpServlet {
-    private ArrayList<Route> mRoutes;
+    private ArrayList<Router> mRouters;
     private ArrayList<Middleware> mMiddlewares;
 
     public Server() {
-        mRoutes = new ArrayList<>();
+        mRouters = new ArrayList<>();
         mMiddlewares = new ArrayList<>();
     }
 
     public void useController(Controller c) {
-        mRoutes.add(c.getRoute());
+        mRouters.add(c.getRoute());
     }
 
     public void useControllers(Controller... controllers) {
@@ -98,9 +96,9 @@ public class Server extends HttpServlet {
     protected void navigate(HttpServletRequest req, HttpServletResponse resp) {
         HttpRequest yReq = new HttpRequest(req);
         HttpResponse yResp = new HttpResponse(resp);
-        Route route = findRoute(req);
+        Router router = findRouter(req);
 
-        if (route != null) {
+        if (router != null) {
             // middlewares logic: return true if next middleware or http action should invoke.
             boolean next = true;
             for (Middleware middleware : mMiddlewares) {
@@ -111,7 +109,7 @@ public class Server extends HttpServlet {
             }
 
             if (next) {
-                route.navigate(yReq, yResp);
+                router.navigate(yReq, yResp);
             }
         } else {
             try {
@@ -131,14 +129,14 @@ public class Server extends HttpServlet {
         return allPaths.length > 0 ? allPaths[1] : path;
     }
 
-    protected Route findRoute(HttpServletRequest req) {
+    protected Router findRouter(HttpServletRequest req) {
         String prefix = parsePrefix(req);
-        Route route = null;
+        Router route = null;
 
-        for (Route currentRoute : mRoutes) {
-            String routePrefix = currentRoute.getPrefix();
+        for (Router currentRouter : mRouters) {
+            String routePrefix = currentRouter.getPrefix();
             if (routePrefix.equals(prefix) || routePrefix.equals("/" + prefix)) {
-                route = currentRoute;
+                route = currentRouter;
                 break;
             }
         }
