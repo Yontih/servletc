@@ -96,7 +96,7 @@ public class Router {
     }
 
     public Router get(String route, Action action) {
-        return this.get(route, action, null);
+        return this.get(route, action);
     }
 
     public Router get(String route, Action action, Middleware... middlewares) {
@@ -105,7 +105,7 @@ public class Router {
     }
 
     public Router post(String route, Action action) {
-        return this.post(route, action, null);
+        return this.post(route, action);
     }
 
     public Router post(String route, Action action, Middleware... middlewares) {
@@ -114,7 +114,7 @@ public class Router {
     }
 
     public Router put(String route, Action action) {
-        return this.put(route, action, null);
+        return this.put(route, action);
     }
 
     public Router put(String route, Action action, Middleware... middlewares) {
@@ -123,7 +123,7 @@ public class Router {
     }
 
     public Router delete(String route, Action action) {
-        return this.delete(route, action, null);
+        return this.delete(route, action);
     }
 
     public Router delete(String route, Action action, Middleware... middlewares) {
