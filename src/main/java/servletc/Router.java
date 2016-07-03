@@ -1,10 +1,10 @@
-package servletx;
+package servletc;
 
-import servletx.http.HttpRequest;
-import servletx.http.HttpResponse;
-import servletx.middlewares.Action;
-import servletx.middlewares.Middleware;
-import servletx.routes.Route;
+import servletc.http.HttpRequest;
+import servletc.http.HttpResponse;
+import servletc.middlewares.Action;
+import servletc.middlewares.Middleware;
+import servletc.routes.Route;
 
 import java.util.*;
 

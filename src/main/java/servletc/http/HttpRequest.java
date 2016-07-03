@@ -1,4 +1,4 @@
-package servletx.http;
+package servletc.http;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;

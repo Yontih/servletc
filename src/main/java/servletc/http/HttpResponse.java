@@ -1,4 +1,4 @@
-package servletx.http;
+package servletc.http;
 
 import org.json.JSONObject;
 

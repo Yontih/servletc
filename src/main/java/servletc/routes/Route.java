@@ -1,7 +1,7 @@
-package servletx.routes;
+package servletc.routes;
 
-import servletx.middlewares.Action;
-import servletx.middlewares.Middleware;
+import servletc.middlewares.Action;
+import servletc.middlewares.Middleware;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,6 +29,10 @@ public class Route {
 
         String routeAsRgx = routeToRegex(route);
         mRoutePattern = Pattern.compile(routeAsRgx);
+    }
+
+    public Route(String route, Action action) {
+        this(route, action, null);
     }
 
     public Map<String, Object> extractParams(String path) {

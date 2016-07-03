@@ -1,8 +1,8 @@
-package servletx;
+package servletc;
 
-import servletx.http.HttpRequest;
-import servletx.http.HttpResponse;
-import servletx.middlewares.Middleware;
+import servletc.http.HttpRequest;
+import servletc.http.HttpResponse;
+import servletc.middlewares.Middleware;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

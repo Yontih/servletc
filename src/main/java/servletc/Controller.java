@@ -1,4 +1,4 @@
-package servletx;
+package servletc;
 
 public class Controller {
 

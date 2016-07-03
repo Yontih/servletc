@@ -1,7 +1,7 @@
-package servletx.middlewares;
+package servletc.middlewares;
 
-import servletx.http.HttpRequest;
-import servletx.http.HttpResponse;
+import servletc.http.HttpRequest;
+import servletc.http.HttpResponse;
 
 /**
  * Created by Yonti on 18/06/2016.
