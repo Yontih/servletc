@@ -4,19 +4,10 @@ import servletx.http.HttpRequest;
 import servletx.http.HttpResponse;
 import servletx.middlewares.Action;
 import servletx.middlewares.Middleware;
-import servletx.routes.RegexRoute;
 import servletx.routes.Route;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.*;
 
-/**
- * Created by Yonti on 18/06/2016.
- */
 public class Router {
     private String mPrefix;
     private HashMap<String, Route> mGetMap;
@@ -43,6 +34,7 @@ public class Router {
         String path = req.getRequest().getPathInfo();
         HashMap<String, Route> map;
 
+        System.out.println("Path: " + path);
         path = path.equals("/") ? path : path.replace(mPrefix, "").replace("//", "/");
 
         switch (method) {
@@ -64,8 +56,14 @@ public class Router {
                 return;
         }
 
+        System.out.println("Path: " + path);
         Route route = findRoute(map, path);
         if (route != null) {
+            if (route.hasParams()) {
+                Map<String, Object> reqParams = route.extractParams(path);
+                req.setParams(reqParams);
+            }
+
             Action action = route.getAction();
             List<Middleware> middlewares = route.getMiddlewares() != null ? mergeMiddlewares(route.getMiddlewares()) : mMiddlewares;
             // middlewares logic: return true if next middleware or http action should invoke.
@@ -97,36 +95,40 @@ public class Router {
         }
     }
 
-    public void get(String route, Action action) {
-        mGetMap.put(route, new RegexRoute(route, action, null));
+    public Router get(String route, Action action) {
+        return this.get(route, action, null);
     }
 
-    public void get(String route, Action action, Middleware... middlewares) {
-        mGetMap.put(route, new RegexRoute(route, action, middlewares));
+    public Router get(String route, Action action, Middleware... middlewares) {
+        mGetMap.put(route, new Route(route, action, middlewares));
+        return this;
     }
 
-    public void post(String route, Action action) {
-        mPostMap.put(route, new RegexRoute(route, action, null));
+    public Router post(String route, Action action) {
+        return this.post(route, action, null);
     }
 
-    public void post(String route, Action action, Middleware... middlewares) {
-        mPostMap.put(route, new RegexRoute(route, action, middlewares));
+    public Router post(String route, Action action, Middleware... middlewares) {
+        mPostMap.put(route, new Route(route, action, middlewares));
+        return this;
     }
 
-    public void put(String route, Action action) {
-        mPutMap.put(route, new RegexRoute(route, action, null));
+    public Router put(String route, Action action) {
+        return this.put(route, action, null);
     }
 
-    public void put(String route, Action action, Middleware... middlewares) {
-        mPutMap.put(route, new RegexRoute(route, action, middlewares));
+    public Router put(String route, Action action, Middleware... middlewares) {
+        mPutMap.put(route, new Route(route, action, middlewares));
+        return this;
     }
 
-    public void delete(String route, Action action) {
-        mDeleteMap.put(route, new RegexRoute(route, action, null));
+    public Router delete(String route, Action action) {
+        return this.delete(route, action, null);
     }
 
-    public void delete(String route, Action action, Middleware... middlewares) {
-        mDeleteMap.put(route, new RegexRoute(route, action, middlewares));
+    public Router delete(String route, Action action, Middleware... middlewares) {
+        mDeleteMap.put(route, new Route(route, action, middlewares));
+        return this;
     }
 
     private Route findRoute(HashMap<String, Route> routesMap, String path) {

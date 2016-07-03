@@ -11,9 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 
-/**
- * Created by Yonti on 18/06/2016.
- */
 public class Server extends HttpServlet {
     private ArrayList<Router> mRouters;
     private ArrayList<Middleware> mMiddlewares;
@@ -24,7 +21,7 @@ public class Server extends HttpServlet {
     }
 
     public void useController(Controller c) {
-        mRouters.add(c.getRoute());
+        mRouters.add(c.getRouter());
     }
 
     public void useControllers(Controller... controllers) {
@@ -94,22 +91,22 @@ public class Server extends HttpServlet {
     }
 
     protected void navigate(HttpServletRequest req, HttpServletResponse resp) {
-        HttpRequest yReq = new HttpRequest(req);
-        HttpResponse yResp = new HttpResponse(resp);
+        HttpRequest request = new HttpRequest(req);
+        HttpResponse response = new HttpResponse(resp);
         Router router = findRouter(req);
 
         if (router != null) {
             // middlewares logic: return true if next middleware or http action should invoke.
             boolean next = true;
             for (Middleware middleware : mMiddlewares) {
-                next = middleware.invoke(yReq, yResp);
+                next = middleware.invoke(request, response);
                 if (!next) {
                     break;
                 }
             }
 
             if (next) {
-                router.navigate(yReq, yResp);
+                router.navigate(request, response);
             }
         } else {
             try {

@@ -4,9 +4,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by Yonti on 18/06/2016.
- */
 public class HttpRequest {
     private HttpServletRequest mReq;
     private Map<String, Object> mExtraData;
@@ -38,6 +35,10 @@ public class HttpRequest {
 
     public void setParams(Map<String, Object> params) {
         mParams = params;
+    }
+
+    public <T> T getParam(String name) {
+        return (T)mParams.get(name);
     }
 
     public <T> void put(String key, T value) {
