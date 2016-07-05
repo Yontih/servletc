@@ -11,33 +11,48 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class Server extends HttpServlet {
-    private ArrayList<Router> mRouters;
+public class HttpServer extends HttpServlet {
+    private ArrayList<Controller> mControllers;
     private ArrayList<Middleware> mMiddlewares;
+    protected Controller mDefaultCtrl;
 
-    public Server() {
-        mRouters = new ArrayList<>();
+    public HttpServer() {
+        mControllers = new ArrayList<>();
         mMiddlewares = new ArrayList<>();
     }
 
-    public void useController(Controller c) {
-        mRouters.add(c.getRouter());
+    /**
+     * @param c: Will use as the default controller, will invoke if no other controllers where found (best practice will be controller without prefix").
+     */
+    public HttpServer setDefaultCtrl(Controller c) {
+        mDefaultCtrl = c;
+        return this;
     }
 
-    public void useControllers(Controller... controllers) {
+    public HttpServer useController(Controller c) {
+        mControllers.add(c);
+        return this;
+    }
+
+    public HttpServer useControllers(Controller... controllers) {
         for (Controller c : controllers) {
             useController(c);
         }
+
+        return this;
     }
 
-    public void useMiddleware(Middleware middleware) {
+    public HttpServer useMiddleware(Middleware middleware) {
         mMiddlewares.add(middleware);
+        return this;
     }
 
-    public void useMiddleware(Middleware... middlewares) {
+    public HttpServer useMiddleware(Middleware... middlewares) {
         for (Middleware middleware : middlewares) {
             useMiddleware(middleware);
         }
+
+        return this;
     }
 
     @Override
@@ -72,30 +87,30 @@ public class Server extends HttpServlet {
 
         System.out.println(req.getRequestURL().toString());
         System.out.println(req.getPathInfo());
-        navigate(req, resp);
+        invokeController(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        navigate(req, resp);
+        invokeController(req, resp);
     }
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        navigate(req, resp);
+        invokeController(req, resp);
     }
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        navigate(req, resp);
+        invokeController(req, resp);
     }
 
-    protected void navigate(HttpServletRequest req, HttpServletResponse resp) {
+    protected void invokeController(HttpServletRequest req, HttpServletResponse resp) {
         HttpRequest request = new HttpRequest(req);
         HttpResponse response = new HttpResponse(resp);
-        Router router = findRouter(req);
+        Controller controller = findController(req);
 
-        if (router != null) {
+        if (controller != null) {
             // middlewares logic: return true if next middleware or http action should invoke.
             boolean next = true;
             for (Middleware middleware : mMiddlewares) {
@@ -106,11 +121,11 @@ public class Server extends HttpServlet {
             }
 
             if (next) {
-                router.navigate(request, response);
+                controller.processRequest(request, response);
             }
         } else {
             try {
-                //TODO: if no external route found for the giver uri, search for the route in the server.
+                //TODO: if no external route found for the given uri, search for the route in the server.
                 resp.sendError(404);
             } catch (Exception e) {
                 String msg = String.format("Error: %s", e.getMessage());
@@ -126,18 +141,22 @@ public class Server extends HttpServlet {
         return allPaths.length > 0 ? allPaths[1] : path;
     }
 
-    protected Router findRouter(HttpServletRequest req) {
+    protected Controller findController(HttpServletRequest req) {
         String prefix = parsePrefix(req);
-        Router route = null;
+        Controller controller = null;
 
-        for (Router currentRouter : mRouters) {
-            String routePrefix = currentRouter.getPrefix();
+        for (Controller c: mControllers) {
+            String routePrefix = c.getPrefix();
             if (routePrefix.equals(prefix) || routePrefix.equals("/" + prefix)) {
-                route = currentRouter;
+                controller = c;
                 break;
             }
         }
 
-        return route;
+        if (controller == null) {
+            controller = mDefaultCtrl;
+        }
+
+        return controller;
     }
 }

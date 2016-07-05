@@ -29,13 +29,17 @@ public class Router {
         return mPrefix;
     }
 
-    public void navigate(HttpRequest req, HttpResponse resp) {
-        String method = req.getRequest().getMethod();
-        String path = req.getRequest().getPathInfo();
-        HashMap<String, Route> map;
 
-        System.out.println("Path: " + path);
+    public void navigate(HttpRequest req, HttpResponse resp) {
+        String path = req.getRequest().getPathInfo();
         path = path.equals("/") ? path : path.replace(mPrefix, "").replace("//", "/");
+
+        navigate(req, resp, path);
+    }
+
+    public void navigate(HttpRequest req, HttpResponse resp, String path) {
+        String method = req.getRequest().getMethod();
+        HashMap<String, Route> map;
 
         switch (method) {
             case "GET":
@@ -56,7 +60,6 @@ public class Router {
                 return;
         }
 
-        System.out.println("Path: " + path);
         Route route = findRoute(map, path);
         if (route != null) {
             if (route.hasParams()) {
@@ -96,25 +99,28 @@ public class Router {
     }
 
     public Router get(String route, Action action) {
-        return this.get(route, action);
+        return this.get(route, action, null);
     }
 
     public Router get(String route, Action action, Middleware... middlewares) {
+        route = resolveRouteStr(route);
         mGetMap.put(route, new Route(route, action, middlewares));
         return this;
     }
 
     public Router post(String route, Action action) {
-        return this.post(route, action);
+        return this.post(route, action, null);
     }
 
     public Router post(String route, Action action, Middleware... middlewares) {
+        route = resolveRouteStr(route);
         mPostMap.put(route, new Route(route, action, middlewares));
         return this;
     }
 
     public Router put(String route, Action action) {
-        return this.put(route, action);
+        route = resolveRouteStr(route);
+        return this.put(route, action, null);
     }
 
     public Router put(String route, Action action, Middleware... middlewares) {
@@ -123,12 +129,23 @@ public class Router {
     }
 
     public Router delete(String route, Action action) {
-        return this.delete(route, action);
+        return this.delete(route, action, null);
     }
 
     public Router delete(String route, Action action, Middleware... middlewares) {
+        route = resolveRouteStr(route);
         mDeleteMap.put(route, new Route(route, action, middlewares));
         return this;
+    }
+
+    private String resolveRouteStr(String route) {
+        if (mPrefix.isEmpty() || mPrefix.equals("/")) {
+            return route;
+        } else if (route.equals("/")) {
+            return String.format("/%s", mPrefix);
+        } else {
+            return String.format("/%s%s", mPrefix, route);
+        }
     }
 
     private Route findRoute(HashMap<String, Route> routesMap, String path) {
