@@ -5,6 +5,7 @@ import servletc.http.HttpResponse;
 import servletc.middlewares.Action;
 import servletc.middlewares.Middleware;
 import servletc.routes.Route;
+import servletc.util.Merger;
 
 import java.util.*;
 
@@ -55,7 +56,7 @@ public class Router {
                 map = mDeleteMap;
                 break;
             default:
-                System.out.println("Unknown http method: " + method);
+                System.out.println("Unknown http method : " + method);
                 resp.sendError(404);
                 return;
         }
@@ -68,10 +69,10 @@ public class Router {
             }
 
             Action action = route.getAction();
-            List<Middleware> middlewares = route.getMiddlewares() != null ? mergeMiddlewares(route.getMiddlewares()) : mMiddlewares;
+            List<Middleware> middlewares = route.getMiddlewares() != null ? Merger.mergeMiddlewares(mMiddlewares, Arrays.asList(route.getMiddlewares())) : mMiddlewares;
             // middlewares logic: return true if next middleware or http action should invoke.
             boolean next = true;
-            if (middlewares != null && middlewares.size() > 0) {
+            if (middlewares != null && !middlewares.isEmpty()) {
                 for (Middleware middleware : middlewares) {
                     next = middleware.invoke(req, resp);
                     if (!next) {
@@ -88,14 +89,17 @@ public class Router {
         }
     }
 
-    public void useMiddleware(Middleware middleware) {
+    public Router useMiddleware(Middleware middleware) {
         mMiddlewares.add(middleware);
+        return this;
     }
 
-    public void useMiddlewares(Middleware... middlewares) {
+    public Router useMiddlewares(Middleware... middlewares) {
         for (Middleware middleware : middlewares) {
             useMiddleware(middleware);
         }
+
+        return this;
     }
 
     public Router get(String route, Action action) {
@@ -162,12 +166,5 @@ public class Router {
         }
 
         return route;
-    }
-
-    private List<Middleware> mergeMiddlewares(Middleware[] specificRequest) {
-        List<Middleware> all = new ArrayList<>();
-        all.addAll(mMiddlewares);
-        all.addAll(Arrays.asList(specificRequest));
-        return all;
     }
 }

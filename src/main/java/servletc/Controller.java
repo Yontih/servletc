@@ -12,11 +12,8 @@ public class Controller {
     }
 
     public void processRequest(HttpRequest req, HttpResponse resp) {
-        String path = req.getRequest().getPathInfo();
+        String path = req.get("pathInfo");
         path = path.equals("/") ? path : path.replace("//", "/");
-
-        System.out.println("Path: " + path);
-
         mRouter.navigate(req, resp, path);
     }
 

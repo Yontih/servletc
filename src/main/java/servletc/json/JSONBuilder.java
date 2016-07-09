@@ -43,4 +43,8 @@ public class JSONBuilder {
     public JSONObject build() {
         return this.json;
     }
+
+    public static JSONBuilder instance() {
+        return new JSONBuilder();
+    }
 }
