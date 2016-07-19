@@ -1,4 +1,4 @@
-package servletc.util;
+package servletc.utils;
 
 import servletc.middlewares.Middleware;
 

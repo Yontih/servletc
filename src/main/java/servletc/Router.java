@@ -5,7 +5,7 @@ import servletc.http.HttpResponse;
 import servletc.middlewares.Action;
 import servletc.middlewares.Middleware;
 import servletc.routes.Route;
-import servletc.util.Merger;
+import servletc.utils.Merger;
 
 import java.util.*;
 

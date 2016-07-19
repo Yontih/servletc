@@ -1,10 +1,9 @@
 package servletc;
 
-import servletc.exceptions.DuplicatePathException;
 import servletc.http.HttpRequest;
 import servletc.http.HttpResponse;
 import servletc.middlewares.Middleware;
-import servletc.util.Merger;
+import servletc.utils.Merger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
