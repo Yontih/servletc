@@ -111,6 +111,7 @@ public class HttpServer extends HttpServlet {
     }
 
     private void addController(String path, Controller c) {
+        c.prepare(this);
         CM cm = mPathObjects.get(path);
 
         if (cm == null) {
@@ -185,41 +186,45 @@ public class HttpServer extends HttpServlet {
     protected void invokeController(HttpServletRequest req, HttpServletResponse resp) {
         HttpRequest request = new HttpRequest(req);
         HttpResponse response = new HttpResponse(resp, req);
-        String pathInfo = req.getPathInfo();
-        CM cm = findPathObject(pathInfo);
+        try {
+            String pathInfo = req.getPathInfo();
+            CM cm = findPathObject(pathInfo);
 
-        if (cm != null) {
-            pathInfo = pathInfo.replace(cm.getPath(), "");
-            Controller controller = findController(cm.getControllers(), pathInfo);
-            if (controller != null) {
-                request.put("pathInfo", pathInfo);
-                List<Middleware> middlewares;
+            if (cm != null) {
+                pathInfo = pathInfo.replace(cm.getPath(), "");
+                Controller controller = findController(cm.getControllers(), pathInfo);
+                if (controller != null) {
+                    request.put("pathInfo", pathInfo);
+                    List<Middleware> middlewares;
 
-                if (cm.getPath() == "") {
-                    middlewares = cm.getMiddlewares();
-                } else {
-                    // merge default middlewares with the path middlewares
-                    List<Middleware> defMiddlewares = mPathObjects.get("").getMiddlewares();
-                    middlewares = Merger.mergeMiddlewares(defMiddlewares, cm.getMiddlewares());
-                }
-
-                // middlewares logic: return true if next middleware or http action should invoke.
-                boolean next = true;
-                for (Middleware middleware : middlewares) {
-                    next = middleware.invoke(request, response);
-                    if (!next) {
-                        break;
+                    if (cm.getPath() == "") {
+                        middlewares = cm.getMiddlewares();
+                    } else {
+                        // merge default middlewares with the path middlewares
+                        List<Middleware> defMiddlewares = mPathObjects.get("").getMiddlewares();
+                        middlewares = Merger.mergeMiddlewares(defMiddlewares, cm.getMiddlewares());
                     }
-                }
 
-                if (next) {
-                    controller.processRequest(request, response);
+                    // middlewares logic: return true if next middleware or http action should invoke.
+                    boolean next = true;
+                    for (Middleware middleware : middlewares) {
+                        next = middleware.invoke(request, response);
+                        if (!next) {
+                            break;
+                        }
+                    }
+
+                    if (next) {
+                        controller.processRequest(request, response);
+                    }
+                } else {
+                    response.sendError(404);
                 }
             } else {
                 response.sendError(404);
             }
-        } else {
-            response.sendError(404);
+        } catch(Exception e) {
+            response.setStatus(505).send(e.getMessage());
         }
 
     }

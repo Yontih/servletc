@@ -1,5 +1,6 @@
 package servletc.http;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.servlet.RequestDispatcher;
@@ -43,6 +44,10 @@ public class HttpResponse {
     }
 
     public void sendJson(JSONObject json) {
+        sendJson(json.toString());
+    }
+
+    public void sendJson(JSONArray json) {
         sendJson(json.toString());
     }
 
